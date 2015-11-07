@@ -3,12 +3,15 @@ var gl;
 var eckpunkt_x;
 var eckpunkt_y;
 var zeichnen = false;
+var color_state = 1;
 
 window.onload = function init()
 {
+    window.addEventListener("keydown", aendereFarbe);
 	// Get canvas and setup webGL
 	
     var canvas = document.getElementById("gl-canvas");
+
 
     
     gl = WebGLUtils.setupWebGL(canvas);
@@ -42,6 +45,23 @@ function render()
     gl.clear(gl.COLOR_BUFFER_BIT);
     
 	gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+function aendereFarbe(e)
+{
+    console.log(e.keyCode);
+    if (e.keyCode==66)
+    {
+        color_state = 1;
+    }
+    else if (e.keyCode==82)
+    {
+        color_state = 2;
+    }
+
+    else if (e.keyCode == 71) {
+        color_state = 3;
+    }
 }
 
 function doSomething(e)
@@ -105,7 +125,7 @@ function lasseMausLos(e)
 
 function normValue(value,valueMin,valueMax,resultMin,resultMax)
 {
-    return ((value*(resultMax-resultMin))/valueMax-valueMin)-resultMax;
+    return (((value-valueMin)*(resultMax-resultMin))/valueMax-valueMin)+resultMin;
 }
 
 
@@ -118,13 +138,37 @@ function zeichneViereck(x,y,xn,yn) {
 										xn, y,
 										xn, yn]);
 
-    var colors = new Float32Array([0, 0, 1, 1,
+    if (color_state == 1)
+    {
+        var colors = new Float32Array([0, 0, 1, 1,
 									0, 0, 1, 1,
 									0, 0, 1, 1,
                                     0, 0, 1, 1,
 									0, 0, 1, 1,
 									0, 0, 1, 1,
-    ]);
+        ]);
+    }
+    else if (color_state == 2)
+    {
+        var colors = new Float32Array([1, 0, 0, 1,
+									1, 0, 0, 1,
+									1, 0, 0, 1,
+                                    1, 0, 0, 1,
+									1, 0, 0, 1,
+									1, 0, 0, 1,
+        ]);
+
+    }
+    else if (color_state == 3)
+    {
+        var colors = new Float32Array([0, 1, 0, 1,
+									0, 1, 0, 1,
+									0, 1, 0, 1,
+                                    0, 1, 0, 1,
+									0, 1, 0, 1,
+									0, 1, 0, 1,
+        ]);
+    }
     // Init shader program and bind it
 
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
