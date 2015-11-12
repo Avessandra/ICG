@@ -19,13 +19,26 @@
 			precision mediump float;
 			
 			varying vec4 fColor;
+            
 			uniform float canvasWidth;
+            uniform float canvasHeight;
+            
+            uniform float ringRadius;
+            uniform float ringWidth;
+            uniform float ringBrightness;
 			
 			void main()
 			{
-				float rot = gl_FragCoord.x/canvasWidth;
-				float gruen = gl_FragCoord.y/canvasWidth;
-				gl_FragColor = vec4(rot,gruen,0, 1);//fColor;
+                vec2 canvasCenter = vec2(canvasWidth/2.0, canvasHeight/2.0);
+                vec2 pos = vec2(gl_FragCoord.x, gl_FragCoord.y);
+                gl_FragColor = fColor;
+				if(distance(pos, canvasCenter) > ringRadius && distance(pos, canvasCenter) < (ringRadius + ringWidth))
+                {
+				    gl_FragColor = vec4(fColor.r * ringBrightness,
+                                        fColor.g * ringBrightness,
+                                        fColor.b * ringBrightness,
+                                        1);
+                }
 			}
 		</script>
 
