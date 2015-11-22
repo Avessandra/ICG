@@ -1,0 +1,6 @@
+precision mediump float;
+
+void main()
+{
+	FRAGMENT_COLOR = vec(1,0,0,1);
+} 
