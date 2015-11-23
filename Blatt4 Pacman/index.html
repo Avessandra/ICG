@@ -7,12 +7,13 @@
 		<script id="vertex-shader" type="x-shader/x-vertex">
 			attribute vec4 vPosition;
 			attribute vec4 vColor;
+            uniform mat4 rotationMatrix;
 
 			varying vec4 zeugs;
 			void main()
 			{
 				zeugs = vColor;
-				gl_Position = vPosition;
+				gl_Position = rotationMatrix*vPosition;
 			}
 		</script>
 		<script id="fragment-shader" type="x-shader/x-fragment">

@@ -1,13 +1,13 @@
 var gl;
 var abstand;
 var program;
-
+var rw;
 window.onload = function init()
 {
 	// Get canvas and setup webGL
 	
     var canvas = document.getElementById("gl-canvas");
-    window.addEventListener("keydown", doSomething);
+    window.addEventListener("keydown", transformiere);
 	gl = WebGLUtils.setupWebGL(canvas);
 
 
@@ -64,6 +64,20 @@ window.onload = function init()
 	abstand = 100.0;
 	void gl.uniform1f(gl.getUniformLocation(program, "abstand"), abstand);
 
+	var rw = 0;
+	var rotationMatrix = new Float32Array([Math.cos(rw), Math.sin(rw), 0, 0,
+											Math.sin(rw) * (-1), Math.cos(rw), 0, 0,
+											0, 0, 1, 0,
+											0, 0, 0, 1]);
+
+	gl.uniformMatrix4fv(gl.getUniformLocation(program, "rotationMatrix"),false, rotationMatrix);
+
+
+
+
+
+
+
 
 	// Load colors into the GPU and associate shader variables
 	
@@ -106,6 +120,35 @@ function doSomething()
     void gl.uniform1f(gl.getUniformLocation(program, "abstand"), abstand);
     console.log("Registriert");
     
+    render();
+}
+
+function transformiere(e)
+{
+    //console.log(e.keyCode);
+
+    if (e.keyCode==37)
+    {
+        rw = Math.PI;       
+    }
+    if (e.keyCode == 39)
+    {
+        rw = 0;
+    }
+    if (e.keyCode == 38)
+    {
+        rw = (Math.PI / 2);
+    }
+    if (e.keyCode == 40)
+    {
+        rw = ((Math.PI*3) / 2);
+    }
+    var rotationMatrix = new Float32Array([Math.cos(rw), Math.sin(rw), 0, 0,
+											Math.sin(rw) * (-1), Math.cos(rw), 0, 0,
+											0, 0, 1, 0,
+											0, 0, 0, 1]);
+    //console.log("transformiert");
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "rotationMatrix"), false, rotationMatrix);
     render();
 }
 
