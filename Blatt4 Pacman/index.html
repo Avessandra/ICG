@@ -8,12 +8,19 @@
 			attribute vec4 vPosition;
 			attribute vec4 vColor;
             uniform mat4 rotationMatrix;
+            uniform mat4 translationMatrix;
+            uniform mat4 originMatrix;
+            uniform float zustand;
 
 			varying vec4 zeugs;
+
 			void main()
 			{
 				zeugs = vColor;
-				gl_Position = rotationMatrix*vPosition;
+                
+				    gl_Position = translationMatrix*rotationMatrix*vPosition;
+                
+                
 			}
 		</script>
 		<script id="fragment-shader" type="x-shader/x-fragment">
