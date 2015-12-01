@@ -1,11 +1,11 @@
 var gl;
 var abstand;
 var program;
-var rw;
+var rw = 0;
 var tx;
 var ty;
-var zustaende = { bewegung: 1.0, rotation: 2.0 };
-var zustand=1.0;
+var x = 0;
+var y = 0;
 window.onload = function init()
 {
 	// Get canvas and setup webGL
@@ -48,6 +48,7 @@ window.onload = function init()
 	                                1, 1, 0, 1,
 	                                1, 1, 0, 1
                                    ]);
+    
 
 	// Configure viewport
 
@@ -65,10 +66,7 @@ window.onload = function init()
 
 	mitte = canvas.width / 2.0;
 	void gl.uniform1f(gl.getUniformLocation(program, "mitte_x"), mitte);
-	abstand = 100.0;
-	void gl.uniform1f(gl.getUniformLocation(program, "abstand"), abstand);
-
-	var rw = 0;
+	rw =  0;
 	tx = 0;
 	ty = 0;
 	var rotationMatrix = new Float32Array([Math.cos(rw), Math.sin(rw), 0, 0,
@@ -118,101 +116,78 @@ function render()
 {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, 9);
-	//window.requestAnimationFrame(render);
+	window.requestAnimationFrame(render);
 }
 
-function doSomething()
-{
-
-
-    console.log("Registriert");
-    
-    abstand += 5;
-    if (abstand > 206)  abstand = 206;
-
-    void gl.uniform1f(gl.getUniformLocation(program, "abstand"), abstand);
-    console.log("Registriert");
-    
-    render();
-}
 
 function transformiere(e)
 {
-    //console.log(e.keyCode);
-    var zero = 1;
+   // console.log(e.keyCode);
     
-
-    if (e.keyCode==37)
+    switch(e.keyCode)
     {
-        if (rw != Math.PI) 
-        {
-            rw = Math.PI;
-        }
-        else 
-        {
-            tx = tx - 0.05;
-        }
+            case 37:
+    
+              
+                     rw += 3.14159265359 / 180.0;
+                    
+            break;
+            
+            case 39:
+            
+             
+                    rw -= 3.14159265359 / 180;
+                     
+            break;
+            
+            case 38:
+                var deltaX =  - 0.05 * Math.sin(rw);   
+                var deltaY = 0.05 * Math.cos(rw);
+                tx += deltaX;
+                ty += deltaY;
+                if(!((tx > -1 + 0.2)&&(tx < 1 - 0.2)))
+                {
+                    tx -= deltaX;
+                }
+            
+                if(!((ty > -1 + 0.2)&&(ty < 1 - 0.2)))
+                {
+                    ty -= deltaY;
+                }
+            
+            break;
+            
+            default:
+            return;
     }
-    if (e.keyCode == 39)
-    {
-        if (rw != 0) {
-            rw = 0;
-            zustand = zustaende.rotation;
-        }
-        else
-        {
-            zustand = zustaende.bewegung;
-            tx += 0.05;
-        }
-    }
-    if (e.keyCode == 38)
-    {
-        if (rw != Math.PI / 2)
-        {
-            rw = Math.PI / 2;
-            zero = 0;
-        }
-        else
-        {
-            ty += 0.05;
-        }
-    }
-    if (e.keyCode == 40)
-    {
-        if (rw != ((Math.PI*3) / 2))
-        {
-            rw = (Math.PI*3)/2;
-        }
-        else{
-            ty -= 0.05;
-        }
-    }
-
+                
     
     var translationMatrix = new Float32Array([1, 0, 0, 0,
                                            0, 1, 0, 0,
                                            0, 0, 1, 0,
-                                            tx, ty, 0, 1]);
-
-    var originMatrix = new Float32Array([1, 0, 0, 0,
-                                           0, 1, 0, 0,
-                                           0, 0, 1, 0,
-                                            0, 0, 0, 1]);
+                                          tx , ty , 0, 1]);           
 
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "translationMatrix"), false, translationMatrix);
 
-    var rotationMatrix = new Float32Array([Math.cos(rw), Math.sin(rw), 0, 0,
-                                        Math.sin(rw) * (-1), Math.cos(rw), 0, 0,
+    var rotationMatrix = new Float32Array([Math.sin(rw) * (-1), Math.cos(rw), 0, 0,
+                                        Math.cos(rw), Math.sin(rw), 0, 0,                                  
                                         0, 0, 1, 0,
                                         0, 0, 0, 1]);
-    console.log(tx);
+    
+    var originMatrix = new Float32Array([1, 0, 0, 0,
+                                           0, 1, 0, 0,
+                                           0, 0, 1, 0,
+                                          tx * Math.sin(rw) - ty * Math.sin(rw),tx * Math.sin(rw) + ty * Math.cos(rw), 0, 1]); 
+    
+    var originMatrixOut = new Float32Array([1, 0, 0, 0,
+                                           0, 1, 0, 0,
+                                           0, 0, 1, 0,
+                                          -tx * Math.sin(rw) - ty * Math.sin(rw),-tx * Math.sin(rw) + ty * Math.cos(rw), 0, 1]);   
+    
+    //console.log(tx + " / " + ty);
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "rotationMatrix"), false, rotationMatrix);
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "originMatrix"), false, originMatrix);
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "originMatrixOut"), false, originMatrixOut);
 
-  
-    zustand = 1.0;  
-    gl.uniform1f(gl.getUniformLocation(program, "zustand"), zustand);
-
-    render();
+    
 }
-

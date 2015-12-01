@@ -8,17 +8,19 @@
 			attribute vec4 vPosition;
 			attribute vec4 vColor;
             uniform mat4 rotationMatrix;
-            uniform mat4 translationMatrix;
-            uniform mat4 originMatrix;
-            uniform float zustand;
-
+            uniform mat4 translationMatrix; 
 			varying vec4 zeugs;
-
 			void main()
 			{
-				zeugs = vColor;
+				    zeugs = vColor;
                 
-				    gl_Position = translationMatrix*rotationMatrix*vPosition;
+                    gl_Position = translationMatrix * rotationMatrix * vPosition; 
+                    
+                    
+                     
+                     
+                    
+                                    
                 
                 
 			}
@@ -28,9 +30,6 @@
 			
 			varying vec4 zeugs;
             uniform float bildschirmbreite;
-            uniform float abstand;
-
-
 			void main()
 			{   
                     gl_FragColor = zeugs;
